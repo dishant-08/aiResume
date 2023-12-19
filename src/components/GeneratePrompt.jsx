@@ -8,40 +8,6 @@ import axios from "axios";
 
 const GeneratePrompt = () => {
   const { formData, formCust, userData } = useContext(UserContext);
-  useEffect(() => {
-    console.log(formCust);
-    console.log(formData);
-  }, [formCust, formData]);
-  const [html, setHtml] = useState();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const inputData = "DishantSahu"; // Replace with your actual data
-
-        const response = await axios.post(
-          "http://localhost:3001/generate-portfolio",
-          {
-            data: inputData,
-          }
-        );
-        console.log(response);
-        console.log(response.data);
-        const generatedCode = response.data.completion;
-        console.log(generatedCode);
-        setHtml(generatedCode);
-        // setGeneratedCode(generatedCode);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    // fetchData();
-  }, []);
-
-  // const resumeHtml = ;
-  const [data, setData] = useState();
-  const prompt = "Say this is a test";
 
   const resumeRef = useRef();
 

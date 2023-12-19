@@ -5,17 +5,15 @@ import GeneratePrompt from "./GeneratePrompt";
 import axios from "axios";
 
 const TemplateCustomization = () => {
-  const { formCust, SetFormCust, userData, setUserData } =
+  // const [datako, SetDatako] = useState();
+
+  const { formCust, SetFormCust, userData, setUserData, selectedTemplate } =
     useContext(UserContext);
   const { formData } = useContext(UserContext);
   const [isLoading, SetLoading] = useState();
 
   const [throt, setThrot] = useState(true);
 
-  useEffect(() => {
-    console.log(formCust);
-    console.log(formData);
-  }, [formCust, formData]);
   const formik = useFormik({
     initialValues: {
       headerPosition: "top",
@@ -32,8 +30,31 @@ const TemplateCustomization = () => {
         try {
           SetLoading(true);
 
-          const inputData = "DishantSahu"; // Replace with your actual data
-
+          const inputData = `Generate a ${selectedTemplate} HTML with TailwindCSS resume for ${
+            formData.name
+          }, ${formData.jobTitle} at ${formData.companyName}. Graduated ${
+            formData.graduationYear
+          }, with impactful projects like ${
+            formData.projects
+          }, please Generate one professional point of explaination from title and TechStack to each project. Attended ${
+            formData.institutionName
+          } and completed courses in ${
+            formData.relevantCourses
+          }. Proficient in ${formData.skills}. Find ${
+            formData.name
+          } on GitHub: ${formData.githubURL}, LinkedIn: ${
+            formData.linkedinURL
+          }, Twitter: ${formData.twitterURL}. Customize resume with ${
+            formCust.headerPosition
+          } header, ${
+            formCust.includePhoto
+              ? `photo URL: ${formCust.photoURL},`
+              : "no photo,"
+          } primary color: ${formCust.primaryColor}, font size: ${
+            formCust.fontSize
+          }, font family: ${formCust.fontFamily}.
+          `; // Replace with your actual data
+          console.log(inputData);
           const response = await axios.post(
             "http://localhost:3001/generate-portfolio",
             {
@@ -41,7 +62,7 @@ const TemplateCustomization = () => {
             }
           );
 
-          console.log(response);
+          // console.log(datako);
           console.log(response.data);
           setUserData(response.data);
         } catch (error) {
@@ -51,7 +72,7 @@ const TemplateCustomization = () => {
         }
 
         setThrot(false);
-        console.log("throttle false");
+        // console.log("throttle false");
         setTimeout(() => {
           setThrot(true);
           console.log("Under timeout");
@@ -63,7 +84,7 @@ const TemplateCustomization = () => {
   return (
     <form
       onSubmit={formik.handleSubmit}
-      className="flex flex-col items-center  "
+      className="flex flex-col items-center "
     >
       <h2 className="text-2xl font-bold mb-4 text-center text-white">
         Customize Your Template
