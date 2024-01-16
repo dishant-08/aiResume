@@ -1,18 +1,105 @@
-import React, { useContext, useEffect, useState } from "react";
+// import React, { useContext, useEffect, useState } from "react";
+// import { useFormik } from "formik";
+// import { UserContext } from "../context/UserContext";
+// import GeneratePrompt from "./GeneratePrompt";
+// import axios from "axios";
+
+// const TemplateCustomization = () => {
+//   // const [datako, SetDatako] = useState();
+
+//   const { formCust, SetFormCust, userData, setUserData, selectedTemplate } =
+//     useContext(UserContext);
+//   const { formData } = useContext(UserContext);
+//   const [isLoading, SetLoading] = useState();
+
+//   const [throt, setThrot] = useState(true);
+
+//   const formik = useFormik({
+//     initialValues: {
+//       headerPosition: "top",
+//       includePhoto: false,
+//       photoURL: "",
+//       primaryColor: "#000000",
+//       fontSize: "16px",
+//       fontText: "sans-serif",
+//     },
+//     onSubmit: async (values, { setSubmitting }) => {
+//       if (throt === true) {
+//         try {
+//           setSubmitting(true); // Set submitting to true before making the API call
+//           SetFormCust({
+//             headerPosition: values.headerPosition,
+//             includePhoto: values.includePhoto,
+//             photoURL: values.photoURL,
+//             primaryColor: values.primaryColor,
+//             fontSize: values.fontSize,
+//             fontText: values.fontText,
+//           });
+
+//           const inputData = `Generate a ${selectedTemplate} HTML with TailwindCSS resume for ${
+//             formData.name
+//           }, ${formData.jobTitle} at ${formData.companyName}. Graduated ${
+//             formData.graduationYear
+//           }, with impactful projects like ${
+//             formData.projects
+//           }, please Generate one professional point of explanation from title and TechStack to each project. Attended ${
+//             formData.institutionName
+//           } and completed courses in ${
+//             formData.relevantCourses
+//           }. Proficient in ${formData.skills}. Find ${
+//             formData.name
+//           } on GitHub: ${formData.githubURL}, LinkedIn: ${
+//             formData.linkedinURL
+//           }, Twitter: ${formData.twitterURL}. Customize resume with ${
+//             formCust.headerPosition
+//           } header, ${
+//             formCust.includePhoto
+//               ? `photo URL: ${formCust.photoURL},`
+//               : "no photo,"
+//           } primary color: ${formCust.primaryColor}, font size: ${
+//             formCust.fontSize
+//           }, font family: ${formCust.fontText}.`;
+//           console.log(inputData);
+
+//           const response = await axios.post(
+//             "http://localhost:3001/generate-portfolio",
+//             { data: inputData }
+//           );
+
+//           setUserData(response.data);
+//         } catch (error) {
+//           console.error("Error fetching data:", error);
+//         } finally {
+//           setSubmitting(false); // Set submitting to false after the API call is completed
+//           SetLoading(false);
+//         }
+
+//         setThrot(false);
+//         setTimeout(() => {
+//           setThrot(true);
+//           console.log("Under timeout");
+//         }, 100);
+//       }
+//     },
+//   });
+
+import React, { useContext, useState } from "react";
 import { useFormik } from "formik";
 import { UserContext } from "../context/UserContext";
 import GeneratePrompt from "./GeneratePrompt";
 import axios from "axios";
 
 const TemplateCustomization = () => {
-  // const [datako, SetDatako] = useState();
-
-  const { formCust, SetFormCust, userData, setUserData, selectedTemplate } =
-    useContext(UserContext);
-  const { formData } = useContext(UserContext);
-  const [isLoading, SetLoading] = useState();
-
-  const [throt, setThrot] = useState(true);
+  const {
+    formCust,
+    SetFormCust,
+    userData,
+    setUserData,
+    selectedTemplate,
+    formData,
+  } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const [throttle, setThrottle] = useState(true);
 
   const formik = useFormik({
     initialValues: {
@@ -21,14 +108,24 @@ const TemplateCustomization = () => {
       photoURL: "",
       primaryColor: "#000000",
       fontSize: "16px",
-      fontFamily: "sans-serif",
+      fontText: "sans-serif",
     },
-    onSubmit: async (values) => {
-      SetFormCust(values);
-
-      if (throt === true) {
+    onSubmit: async (values, { setSubmitting }) => {
+      if (throttle) {
         try {
-          SetLoading(true);
+          setSubmitting(true);
+          setIsLoading(true);
+
+          const updatedFormCust = {
+            headerPosition: values.headerPosition,
+            includePhoto: values.includePhoto,
+            photoURL: values.photoURL,
+            primaryColor: values.primaryColor,
+            fontSize: values.fontSize,
+            fontText: values.fontText,
+          };
+
+          SetFormCust(updatedFormCust);
 
           const inputData = `Generate a ${selectedTemplate} HTML with TailwindCSS resume for ${
             formData.name
@@ -36,7 +133,7 @@ const TemplateCustomization = () => {
             formData.graduationYear
           }, with impactful projects like ${
             formData.projects
-          }, please Generate one professional point of explaination from title and TechStack to each project. Attended ${
+          }, please Generate one professional point of explanation from title and TechStack to each project. Attended ${
             formData.institutionName
           } and completed courses in ${
             formData.relevantCourses
@@ -45,38 +142,34 @@ const TemplateCustomization = () => {
           } on GitHub: ${formData.githubURL}, LinkedIn: ${
             formData.linkedinURL
           }, Twitter: ${formData.twitterURL}. Customize resume with ${
-            formCust.headerPosition
+            updatedFormCust.headerPosition
           } header, ${
-            formCust.includePhoto
-              ? `photo URL: ${formCust.photoURL},`
+            updatedFormCust.includePhoto
+              ? `photo URL: ${updatedFormCust.photoURL},`
               : "no photo,"
-          } primary color: ${formCust.primaryColor}, font size: ${
-            formCust.fontSize
-          }, font family: ${formCust.fontFamily}.
-          `; // Replace with your actual data
+          } primary color: ${updatedFormCust.primaryColor}, font size: ${
+            updatedFormCust.fontSize
+          }, font family: ${updatedFormCust.fontText}.`;
+
           console.log(inputData);
+
           const response = await axios.post(
             "http://localhost:3001/generate-portfolio",
-            {
-              data: inputData,
-            }
+            { data: inputData }
           );
-
-          // console.log(datako);
-          console.log(response.data);
           setUserData(response.data);
         } catch (error) {
           console.error("Error fetching data:", error);
         } finally {
-          SetLoading(false);
-        }
+          setSubmitting(false);
+          setIsLoading(false);
+          setThrottle(false);
 
-        setThrot(false);
-        // console.log("throttle false");
-        setTimeout(() => {
-          setThrot(true);
-          console.log("Under timeout");
-        }, 10000);
+          setTimeout(() => {
+            setThrottle(true);
+            console.log("Under timeout");
+          }, 1000);
+        }
       }
     },
   });
@@ -185,18 +278,18 @@ const TemplateCustomization = () => {
 
         <div className="font-selection mb-4">
           <label
-            htmlFor="font-family"
+            htmlFor="font-text"
             className="block text-lg font-semibold mb-2 text-white"
           >
             Font Family
           </label>
           <select
-            name="fontFamily"
-            id="font-family"
+            name="fontText"
+            id="font-text"
             className="p-2 border border-gray-300 bg-blue-100 rounded-lg focus:outline-none"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.fontFamily}
+            value={formik.values.fontText}
           >
             <option value="sans-serif">Sans-Serif</option>
             <option value="serif">Serif</option>

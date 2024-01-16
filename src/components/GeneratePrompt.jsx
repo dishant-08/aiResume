@@ -50,7 +50,7 @@ const GeneratePrompt = () => {
           family set to {formCust.fontFamily}.
         </p> */}
       {/* </div> */}
-      <div className="flex flex-col">
+      <div className="flex flex-col bg-sky-300 ">
         <div
           // className="w-[1080px]  "
           ref={resumeRef}
@@ -59,7 +59,7 @@ const GeneratePrompt = () => {
 
         <button
           type="button"
-          className="text-white items-center m-4 rounded-md p-1 bg-fuchsia-500 mx-auto"
+          className="text-white items-center m-4 rounded-md p-1 shadow-md shadow-blue-500 bg-fuchsia-500 mx-auto"
           onClick={downloadPdf}
         >
           Download PDF
